@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Including jQuery library for DOM manipulation and event handling -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js" type="text/javascript"></script>
+    <title>Week 11</title>
+    <!-- CSS Styling for the shape container and controls -->
+    <style>
+        /* Container for all shapes, with flexbox for layout */
+        .shapeContainerWrapper {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 20px;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+            justify-content: flex-start;
+            align-items: flex-start;
+            align-content: flex-start;
+        }
+        /* Individual shape containers with defined size and transition for animations */
+        .shapeContainer {
+            width: 100px;
+            height: 100px;
+            margin: 5px;
+            transition: all 0.5s ease;
+        }
+        /* Controls for adding and removing shapes */
+        .controls {
+            margin-bottom: 20px;
+        }
+        /* Controls for selecting shape type and color */
+        .shapeControls {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="shapeContainerWrapper">
+        <div class="controls">
+            <button id="addShapeButton">Add Shape</button>
+            <button id="removeShapeButton">Remove Shape</button>
+        </div>
+        <div class="shapeControls">
+            <label for="shapeType">Choose a shape:</label>
+            <select id="shapeType">
+                <option value="circle">Circle</option>
+                <option value="square">Square</option>
+                <option value="rectangle">Rectangle</option>
+            </select>
+            <label for="colorPicker">Select color:</label>
+            <input type="color" id="colorPicker">
+        </div>
+    </div>
+    <script>
+        let isAnimating = false; // Flag to prevent animation overlap
+
+        // Function to add a new shape to the container
+        function addShape() {
+            if (isAnimating) return; // Prevent function execution during an animation
+            isAnimating = true;
+
+            var container = $('.shapeContainerWrapper');
+            var shapeType = $('#shapeType').val();
+            var color = $('#colorPicker').val();
+            var shape = $('<div class="shapeContainer"></div>');
+
+            // Initial CSS for the new shape, including position and opacity for animation
+            shape.css({
+                'background-color': color,
+                'position': 'relative',
+                'left': '-150px',
+                'opacity': '0'
+            });
+
+            // Adjusting shape properties based on selected shape type
+            if (shapeType === 'circle') {
+                shape.css('border-radius', '50%');
+            } else if (shapeType === 'square') {
+                shape.css('border-radius', '0');
+            } else if (shapeType === 'rectangle') {
+                shape.css({
+                    'border-radius': '0',
+                    'width': '150px'
+                });
+            }
+
+            // Append the shape and animate it into view
+            container.append(shape);
+            shape.animate({left: '0px', opacity: '1'}, 500, function() {
+                isAnimating = false;
+            });
+        }
+
+        // Function to remove the last shape from the container
+        function removeShape() {
+            if (isAnimating) return; // Prevent function execution during an animation
+            isAnimating = true;
+
+            var lastShape = $('.shapeContainerWrapper').children('.shapeContainer').last();
+            if (lastShape.length) {
+                // Fade out and remove the last shape
+                lastShape.fadeOut(500, function() {
+                    lastShape.remove();
+                    isAnimating = false;
+                });
+            } else {
+                isAnimating = false;
+            }
+        }
+
+        // Event listeners for buttons
+        $('#addShapeButton').on('click', addShape);
+        $('#removeShapeButton').on('click', removeShape);
+    </script>
+</body>
+</html>
